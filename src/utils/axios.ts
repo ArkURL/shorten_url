@@ -2,9 +2,11 @@ import axios from "axios";
 
 // axios.defaults.withCredentials = true;
 
+console.log(import.meta.env.MODE);
+
 const instance = axios.create({
-  baseURL: "",
-  timeout: 5000,
+  baseURL: import.meta.env.VITE_BASE_URL,
+  timeout: 8000,
 });
 
 instance.interceptors.request.use(

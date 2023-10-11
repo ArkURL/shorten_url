@@ -168,7 +168,7 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
         margin-top: 20px;
         margin-left: 16px;
         > ::before {
-            content: '映射为：';
+            content: '短链接：';
             position: absolute;
             left: -72px;
         }
