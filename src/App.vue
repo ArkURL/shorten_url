@@ -113,15 +113,16 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
             height: 30px;
             line-height: 30px;
             white-space: nowrap;
+            background-color: rgba($color: #ffffff, $alpha: 0.8);
             // background-color: yellow;
             > .right-part-text {
                 padding-left: 3px;
-                background-color: rgba($color: #ffffff, $alpha: 1);
+                background-color: rgba($color: #ffffff, $alpha: 0.8);
                 position: absolute;
                 transition: transform 1s ease-in-out;
                 > .en-text {
                     position: absolute;
-                    background-color: rgba($color: #ffffff, $alpha: 1);
+                    background-color: rgba($color: #ffffff, $alpha: 0.8);
                 }
             }
         }
