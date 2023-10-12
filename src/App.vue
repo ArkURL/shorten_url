@@ -1,24 +1,25 @@
 <script setup lang="ts">
-import VerticalTextBoard from './components/VerticalTextBoard.vue'
+import VerticalTextBoard from "./components/VerticalTextBoard.vue"
 
-import { ref } from 'vue'
-import axios from '@/utils/axios'
-import { debounce_leading } from '@/utils/tools'
+import { ref } from "vue"
+import axios from "@/utils/axios"
+import { debounce_leading } from "@/utils/tools"
+import type { ShortenURLResponseData } from "./d.ts/shortenURLApiResponse.d.ts"
 
-const inputValue = ref('')
-const outputURL = ref('')
+const inputValue = ref("")
+const outputURL = ref("")
 
 async function handleKeyDown() {
     // request to shrink url server response
-    const response = (await axios.post('/api/v1/shorten', {
+    const response = (await axios.post("/api/v1/shorten", {
         url: inputValue.value,
-    })) as any
+    })) as ShortenURLResponseData
+
     const { result_url } = response
     outputURL.value = result_url
 }
 
 const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
-
 </script>
 
 <template>
@@ -90,7 +91,7 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
     > .title-board {
         font-size: x-large;
         font-weight: bold;
-        font-family: 'Noto Sans SC', sans-serif;
+        font-family: "Noto Sans SC", sans-serif;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -151,7 +152,7 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
             background-color: #d9d9d9;
             outline: none;
             // text-indent: 10px;
-            font-family: 'Noto Sans SC', sans-serif;
+            font-family: "Noto Sans SC", sans-serif;
             color: rgba($color: #000000, $alpha: 0.8);
             padding-right: 10px;
             padding-left: 10px;
@@ -160,7 +161,7 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
     > .output-board {
         font-size: larger;
         font-weight: bold;
-        font-family: 'Noto Sans SC', sans-serif;
+        font-family: "Noto Sans SC", sans-serif;
         color: rgba($color: #000000, $alpha: 0.8);
         // align-self: flex-start;
         height: 30px;
@@ -169,7 +170,7 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
         margin-top: 20px;
         margin-left: 16px;
         > ::before {
-            content: '短链接：';
+            content: "短链接：";
             position: absolute;
             left: -72px;
         }
@@ -180,3 +181,4 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
     }
 }
 </style>
+./d.ts/shortenURLApiResponse
