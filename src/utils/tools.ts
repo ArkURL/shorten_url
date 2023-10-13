@@ -1,8 +1,10 @@
-function debounce_leading(func: Function, timeout = 1000) {
+import type { debounceFunction } from "@/d.ts/debounceFunction"
+
+function debounce_leading(func: debounceFunction, timeout = 1000) {
     let timer: ReturnType<typeof setTimeout> | null = null
-    return (...args: any[]) => {
+    return <T>(...args: T[]) => {
         if (!timer) {
-            func.apply(null, args)
+            func(...args)
         }
         clearTimeout(timer as ReturnType<typeof setTimeout>)
         timer = setTimeout(() => {
