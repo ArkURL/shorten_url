@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import VerticalTextBoard from "./components/VerticalTextBoard.vue"
+// import Loading from "vue-loading-overlay"
+// import "vue-loading-overlay/dist/css/index.css"
+import { useLoading } from "vue-loading-overlay"
 
 import { ref } from "vue"
 import axios from "@/utils/axios"
@@ -8,13 +11,31 @@ import type { ShortenURLResponseData } from "./d.ts/shortenURLApiResponse.d.ts"
 
 const inputValue = ref("")
 const outputURL = ref("")
+const isAlertShouldRender = ref(false)
+
+const $loading = useLoading({
+    isFullPage: true,
+    canCancel: false,
+    active: true,
+})
+
+function hintUserAboutDeviceWidth() {
+    const deviceWidth = window.screen.width
+    // 如果设备宽度大于800就不用弹提示了
+    const shouldHint = deviceWidth > 800 ? false : true
+    isAlertShouldRender.value = shouldHint
+}
+
+// 如果访问设备宽度小于阈值，则弹出消息提示框
+hintUserAboutDeviceWidth()
 
 async function handleKeyDown() {
+    const loader = $loading.show({})
     // request to shrink url server response
     const response = (await axios.post("/api/v1/shorten", {
         url: inputValue.value,
     })) as ShortenURLResponseData
-
+    loader.hide()
     const { result_url } = response
     outputURL.value = result_url
 }
@@ -23,6 +44,7 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
 </script>
 
 <template>
+    <el-alert title="检测到设备可能为手机竖屏状态" description="请使用PC或将手机调整至横屏状态以获得更佳体验" type="warning" show-icon v-if="isAlertShouldRender" />
     <div class="origin-link-board">
         <VerticalTextBoard>
             <template v-slot:first-line> https://www.youtube.com/watch?v=V_Kr9OSfDeU </template>
@@ -67,6 +89,13 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
 </template>
 
 <style scoped lang="scss">
+.el-alert {
+    position: fixed;
+    top: 20px;
+    left: 5vw;
+    width: 90vw;
+    z-index: 1;
+}
 .origin-link-board {
     position: absolute;
     left: 40px;
@@ -118,12 +147,12 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
             // background-color: yellow;
             > .right-part-text {
                 padding-left: 3px;
-                background-color: rgba($color: #ffffff, $alpha: 0.8);
+                background-color: rgba($color: #ffffff, $alpha: 1);
                 position: absolute;
                 transition: transform 1s ease-in-out;
                 > .en-text {
                     position: absolute;
-                    background-color: rgba($color: #ffffff, $alpha: 0.8);
+                    background-color: rgba($color: #ffffff, $alpha: 1);
                 }
             }
         }
