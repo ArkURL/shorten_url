@@ -12,6 +12,7 @@ import type { ShortenURLResponseData } from "./d.ts/shortenURLApiResponse.d.ts"
 const inputValue = ref("")
 const outputURL = ref("")
 const isAlertShouldRender = ref(false)
+const isQueried = ref(false)
 
 const $loading = useLoading({
     isFullPage: true,
@@ -19,11 +20,22 @@ const $loading = useLoading({
     active: true,
 })
 
+const outputURLRef = ref()
+const hiddenTextArea = ref()
+
 function hintUserAboutDeviceWidth() {
     const deviceWidth = window.screen.width
     // 如果设备宽度大于800就不用弹提示了
     const shouldHint = deviceWidth > 800 ? false : true
     isAlertShouldRender.value = shouldHint
+}
+
+function handleCopyURL() {
+    hiddenTextArea.value.value = outputURLRef.value.textContent
+    hiddenTextArea.value.select()
+    // 较老的复制api，新的只能在https环境或开发环境中使用
+    const copied = document.execCommand("copy")
+    console.log(copied)
 }
 
 // 如果访问设备宽度小于阈值，则弹出消息提示框
@@ -38,6 +50,7 @@ async function handleKeyDown() {
     loader.hide()
     const { result_url } = response
     outputURL.value = result_url
+    isQueried.value = true
 }
 
 const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
@@ -72,7 +85,15 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
             <input type="text" class="input" placeholder="input here..." @keydown.enter="debouncedHandleKeyDown" v-model.trim="inputValue" />
         </div>
         <div class="output-board">
-            <span class="output-text">{{ outputURL }}</span>
+            <span class="output-text" ref="outputURLRef">
+                {{ outputURL }}
+            </span>
+            <el-popover ref="popover" placement="right" trigger="click" content="Copied!" effect="dark" :auto-close="1000" popper-class="clipboard-popper">
+                <template #reference>
+                    <el-icon v-show="isQueried" @click="handleCopyURL"><CopyDocument /></el-icon>
+                </template>
+            </el-popover>
+            <textarea name="" id="" cols="30" rows="10" class="hidden-textarea" ref="hiddenTextArea"></textarea>
         </div>
     </div>
 
@@ -198,7 +219,8 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
         border-bottom: 1px solid black;
         margin-top: 20px;
         margin-left: 16px;
-        > ::before {
+        // position: relative;
+        &::before {
             content: "短链接：";
             position: absolute;
             left: -72px;
@@ -207,7 +229,31 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
             // text-decoration: underline;
             width: 100%;
         }
+
+        > .el-icon {
+            position: absolute;
+            right: -8px;
+            cursor: pointer;
+            border: 1px solid rgba($color: #000000, $alpha: 0.8);
+            padding: 3px;
+            border-radius: 5px;
+            bottom: 10px;
+            transition: background-color 0.1s ease-in-out;
+            &:hover {
+                background-color: #d9d9d9;
+            }
+        }
+        > .hidden-textarea {
+            position: absolute;
+            opacity: 0;
+            cursor: default;
+            user-select: none;
+        }
     }
+}
+
+.clipboard-popper {
+    max-width: 50px;
 }
 </style>
 ./d.ts/shortenURLApiResponse
