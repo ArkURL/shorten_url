@@ -244,6 +244,8 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
             }
         }
         > .hidden-textarea {
+            width: 0;
+            height: 0;
             position: absolute;
             opacity: 0;
             cursor: default;
