@@ -83,6 +83,9 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
         </div>
         <div class="input-area">
             <input type="text" class="input" placeholder="input here..." @keydown.enter="debouncedHandleKeyDown" v-model.trim="inputValue" />
+            <div class="icon-container">
+                <el-icon :size="18" @click="debouncedHandleKeyDown"><Search /></el-icon>
+            </div>
         </div>
         <div class="output-board">
             <span class="output-text" ref="outputURLRef">
@@ -193,6 +196,20 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
     > .input-area {
         margin-top: 30px;
         width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        > .icon-container {
+            height: 34px;
+            position: relative;
+            > .el-icon {
+                position: absolute;
+                height: 100%;
+                left: -30px;
+                cursor: pointer;
+                // width: 34px;
+            }
+        }
         > .input {
             width: 100%;
             // border: 0;
@@ -204,7 +221,7 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
             // text-indent: 10px;
             font-family: "Noto Sans SC", sans-serif;
             color: rgba($color: #000000, $alpha: 0.8);
-            padding-right: 10px;
+            padding-right: 36px;
             padding-left: 10px;
         }
     }
@@ -218,12 +235,12 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
         width: 100%;
         border-bottom: 1px solid black;
         margin-top: 20px;
-        margin-left: 16px;
+        // margin-left: 16px;
         // position: relative;
         &::before {
             content: "短链接：";
             position: absolute;
-            left: -72px;
+            left: -82px;
         }
         > .output-text {
             // text-decoration: underline;
