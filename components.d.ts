@@ -8,6 +8,7 @@ export {}
 declare module "vue" {
     export interface GlobalComponents {
         ElAlert: (typeof import("element-plus/es"))["ElAlert"]
+        ElButton: (typeof import("element-plus/es"))["ElButton"]
         ElIcon: (typeof import("element-plus/es"))["ElIcon"]
         ElPopover: (typeof import("element-plus/es"))["ElPopover"]
         VerticalTextBoard: (typeof import("./src/components/VerticalTextBoard.vue"))["default"]
