@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import VerticalTextBoard from "./components/VerticalTextBoard.vue"
-// import Loading from "vue-loading-overlay"
-// import "vue-loading-overlay/dist/css/index.css"
 import { useLoading } from "vue-loading-overlay"
 
 import { ref } from "vue"
 import axios from "@/utils/axios"
-import { debounce_leading } from "@/utils/tools"
+import { debounce_leading, validate_url } from "@/utils/tools"
 import type { ShortenURLResponseData } from "./d.ts/shortenURLApiResponse.d.ts"
 
 const inputValue = ref("")
@@ -30,6 +28,15 @@ function hintUserAboutDeviceWidth() {
     isAlertShouldRender.value = shouldHint
 }
 
+function handleUrlCheck(): boolean {
+    if (validate_url(inputValue.value)) return true
+    ElMessage({
+        type: "error",
+        message: "输入网址格式有误，请检查输入网址是否正确",
+    })
+    return false
+}
+
 function handleCopyURL() {
     hiddenTextArea.value.value = outputURLRef.value.textContent
     hiddenTextArea.value.select()
@@ -42,6 +49,7 @@ function handleCopyURL() {
 hintUserAboutDeviceWidth()
 
 async function handleKeyDown() {
+    if (!handleUrlCheck()) return
     const loader = $loading.show({})
     // request to shrink url server response
     const response = (await axios.post("/api/v1/shorten", {
@@ -57,7 +65,13 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
 </script>
 
 <template>
-    <el-alert title="检测到设备可能为手机竖屏状态" description="请使用PC或将手机调整至横屏状态以获得更佳体验" type="warning" show-icon v-if="isAlertShouldRender" />
+    <el-alert
+        title="检测到设备可能为手机竖屏状态"
+        description="请使用PC或将手机调整至横屏状态以获得更佳体验"
+        type="warning"
+        show-icon
+        v-if="isAlertShouldRender"
+    />
     <div class="origin-link-board">
         <VerticalTextBoard>
             <template v-slot:first-line> https://www.youtube.com/watch?v=V_Kr9OSfDeU </template>
@@ -82,21 +96,53 @@ const debouncedHandleKeyDown = debounce_leading(handleKeyDown)
             </div>
         </div>
         <div class="input-area">
-            <input type="text" class="input" placeholder="input here..." @keydown.enter="debouncedHandleKeyDown" v-model.trim="inputValue" />
+            <input
+                type="text"
+                class="input"
+                placeholder="input here..."
+                @keydown.enter="debouncedHandleKeyDown"
+                v-model.trim="inputValue"
+            />
             <div class="icon-container">
-                <el-icon :size="18" @click="debouncedHandleKeyDown"><Search /></el-icon>
+                <el-icon
+                    :size="18"
+                    @click="debouncedHandleKeyDown"
+                    ><Search
+                /></el-icon>
             </div>
         </div>
         <div class="output-board">
-            <span class="output-text" ref="outputURLRef">
+            <span
+                class="output-text"
+                ref="outputURLRef"
+            >
                 {{ outputURL }}
             </span>
-            <el-popover ref="popover" placement="right" trigger="click" content="Copied!" effect="dark" :auto-close="1000" popper-class="clipboard-popper">
+            <el-popover
+                ref="popover"
+                placement="right"
+                trigger="click"
+                content="Copied!"
+                effect="dark"
+                :auto-close="1000"
+                popper-class="clipboard-popper"
+            >
                 <template #reference>
-                    <el-icon v-show="isQueried" @click="handleCopyURL"><CopyDocument /></el-icon>
+                    <el-icon
+                        v-show="isQueried"
+                        @click="handleCopyURL"
+                        ><CopyDocument
+                    /></el-icon>
                 </template>
             </el-popover>
-            <textarea name="" id="" cols="30" rows="10" class="hidden-textarea" ref="hiddenTextArea"></textarea>
+            <textarea
+                name=""
+                id=""
+                cols="30"
+                rows="10"
+                class="hidden-textarea"
+                ref="hiddenTextArea"
+            ></textarea>
         </div>
     </div>
 
